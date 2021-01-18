@@ -1,18 +1,29 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using FluentAssertions;
+using NUnit.Framework;
+using RestSharp;
 
 namespace BeachWeatherStations
 {
     [TestFixture]
     public class Tests
     {
-        [Test]
+        [TestCase("63rd Street Weather Station")]
         [Description(@"As a user of the API I want to list all measurements taken by the station on Oak Street in json format.
             ○ GIVEN beach weather station sensor “Oak Street”
             ○ WHEN the user requests station data
             ○ THEN all data measurements correspond to only that station")]
-        public void AllReturnedDataShouldCorrespondsToRequestedStation()
+        public void AllReturnedDataShouldCorrespondsToRequestedStation(string station)
         {
-            Assert.True(false);
+            var restClient = new RestClient("https://data.cityofchicago.org/");
+            var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddParameter("station_name", station);
+            restClient
+                .Execute<List<Entry>>(request)
+                .Data
+                .Should()
+                .OnlyContain(entry => entry.StationName == station,
+                    because: $"all measurements must correspond to the requested station {station}");
         }        
         
         [Test]
