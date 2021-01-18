@@ -2,7 +2,7 @@ using System;
 
 namespace BeachWeatherStations
 {
-    public  class Entry
+    public partial class Entry : IEquatable<Entry>
     {
         public string StationName { get; set; }
         public DateTimeOffset MeasurementTimestamp { get; set; }
@@ -22,5 +22,25 @@ namespace BeachWeatherStations
         public string BatteryLife { get; set; }
         public string MeasurementTimestampLabel { get; set; }
         public string MeasurementId { get; set; }
+    }
+
+    public partial class Entry
+    {
+        public bool Equals(Entry other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(MeasurementId, other.MeasurementId, StringComparison.InvariantCulture);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Entry) obj);
+        }
+
+        public override int GetHashCode() => StringComparer.InvariantCulture.GetHashCode(MeasurementId);
     }
 }
