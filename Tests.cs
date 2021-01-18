@@ -26,16 +26,28 @@ namespace BeachWeatherStations
                     because: $"all measurements must correspond to the requested station {station}");
         }        
         
-        [Test]
+        [TestCase("63rd Street Weather Station", 10)]
         [Description(@"As a user of the API I want to be able to page through json data sets of 2019 taken by the sensor on
         63rd Street.
             ○ GIVEN the beach weather station on 63rd Street’s sensor data of 2019
             ○ WHEN the user requests data for the first 10 measurements
             ○ AND the second page of 10 measurements
             ○ THEN the returned measurements of both pages should not repeat")]
-        public void ReturnedMeasurementsOnDifferentPagesShouldNotRepeat()
+        public void ReturnedMeasurementsOnDifferentPagesShouldNotRepeat(string station, int limit)
         {
-            Assert.True(false);
+            var restClient = new RestClient("https://data.cityofchicago.org/");
+            var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddParameter("station_name", station);
+            request.AddParameter("$limit", limit);
+            var page = 0;
+            var offset = page * limit;
+            request.AddParameter("$offset", offset);
+            var firstPageResult = restClient.Execute<List<Entry>>(request).Data;
+            page = 1;
+            offset = page * limit;
+            request.AddOrUpdateParameter("$offset", offset);
+            var secondPageResult = restClient.Execute<List<Entry>>(request).Data;
+            firstPageResult.Should().NotIntersectWith(secondPageResult, because:"measurements on different pages should not repeat");
         }        
         
         [Test]
