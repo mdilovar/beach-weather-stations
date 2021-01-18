@@ -3,7 +3,7 @@
 Check out the repo and open the solution in an IDE that supports .NET (Rider, Visual Studio, etc.)
 Open the Test.cs file and run the tests there. Most IDEs will recognize that this is a test project and give you shortcuts to run the tests in the file.
 ## Possible improvements that I did not get into:
-1. Refactoring common items from the test (e.g. the rest client, the base URL, the resource path, etc.)
+1. Refactoring common items from the test (e.g. the rest client, the base URL, the resource path, common headers, App Token, etc.)
 2. Adding support for logging. More on this below if you are interested.
 3. I am sure there are other potential improvements possible such as using a BDD framework like Serenity instead of NUnit, etc.
 # An idea for adding logging support:
