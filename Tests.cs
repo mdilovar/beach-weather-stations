@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 using RestSharp;
 
@@ -50,7 +52,7 @@ namespace BeachWeatherStations
             firstPageResult.Should().NotIntersectWith(secondPageResult, because:"measurements on different pages should not repeat");
         }        
         
-        [Test]
+        [TestCase("63rd Street Weather Station", "battery_life < full")]
         [Description(@"As a user of the API I expect a SQL query to fail with an error message if I search using a malformed
         query. Note: This is a negative test. We want to make sure that the API throws an error when
         expected.
@@ -59,9 +61,19 @@ namespace BeachWeatherStations
             less than the text “full” ($where=battery_life < full)
             ○ THEN an error code “malformed compiler” with message “Could not parse SoQL
             query” is returned")]
-        public void MalformedQueryShouldReturnAnError()
+        public void MalformedQueryShouldReturnAnError(string station, string badWhereQuery)
         {
-            Assert.True(false);
+            var restClient = new RestClient("https://data.cityofchicago.org/");
+            var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddParameter("station_name", station);
+            request.AddParameter("$where", badWhereQuery);
+            var response = restClient.Execute<Error>(request);
+            using (new AssertionScope())
+            {
+                response.IsSuccessful.Should().BeFalse(because: "malformed request should fail should fail");
+                response.Data.Code.Should().Contain("query.compiler.malformed");
+                response.Data.Message.Should().Contain("Could not parse SoQL query");   
+            }
         }
     }
 }
