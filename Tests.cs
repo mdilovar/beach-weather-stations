@@ -18,6 +18,7 @@ namespace BeachWeatherStations
         {
             var restClient = new RestClient("https://data.cityofchicago.org/");
             var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddHeader("X-App-Token", "i35Idwmd3PqVDubVd3Y4HbOq2");
             request.AddParameter("station_name", station);
             restClient
                 .Execute<List<Entry>>(request)
@@ -38,6 +39,7 @@ namespace BeachWeatherStations
         {
             var restClient = new RestClient("https://data.cityofchicago.org/");
             var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddHeader("X-App-Token", "i35Idwmd3PqVDubVd3Y4HbOq2");
             request.AddParameter("station_name", station);
             request.AddParameter("$limit", limit);
             var page = 0;
@@ -64,6 +66,7 @@ namespace BeachWeatherStations
         {
             var restClient = new RestClient("https://data.cityofchicago.org/");
             var request = new RestRequest(Method.GET) {Resource = "resource/k7hf-8y75.json"};
+            request.AddHeader("X-App-Token", "i35Idwmd3PqVDubVd3Y4HbOq2");
             request.AddParameter("station_name", station);
             request.AddParameter("$where", badWhereQuery);
             var response = restClient.Execute<Error>(request);
